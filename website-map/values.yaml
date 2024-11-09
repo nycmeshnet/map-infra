@@ -1,4 +1,4 @@
-app_namespace: website_map
+app_namespace: website-map
 
 backend:
   replicaCount: 1
