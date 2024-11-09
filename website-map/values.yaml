@@ -16,7 +16,7 @@ backend:
   livenessProbePeriodSeconds: 15
   resources: {}
 
-pvc_name: "website_map_data"
+pvc_name: "website-map-data"
 pvc_size: "1Gi"
 
 nameOverride: ""
