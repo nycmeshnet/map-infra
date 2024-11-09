@@ -4,6 +4,7 @@ metadata:
   name: {{ include "website-map.fullname" . }}-backend
   labels:
     {{- include "website-map.labels" . | nindent 4 }}
+  namespace: {{ .Values.app_namespace }}
 spec:
   type: {{ .Values.backend.service.type }}
   ports:
