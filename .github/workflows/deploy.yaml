@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master, james/helm ]
+  workflow_dispatch:
+    branches:
+      - master
+
+permissions: read-all
+
+jobs:
+  deploy_to_dev3:
+    name: Deploy to dev 3
+    uses: ./.github/workflows/helm_deploy.yaml
+    with:
+      environment: dev3
+    secrets: inherit
+    #if: github.ref == 'refs/heads/master'
+
+  deploy_to_prod1:
+    name: Deploy to prod 1
+    uses: ./.github/workflows/helm_deploy.yaml
+    with:
+      environment: prod1
+    secrets: inherit
+    needs: deploy_to_dev3
+    if: github.ref == 'refs/heads/master'

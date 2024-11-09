@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "website-map.fullname" . }}
+  namespace: {{ .Values.app_namespace }}
+  labels:
+    {{- include "website-map.labels" . | nindent 4 }}
+spec:
+  rules:
+    - host: {{ .Values.fqdn }}
+      http:
+        paths:
+          - path: "/"
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "website-map.fullname" . }}-backend
+                port:
+                  number: {{ .Values.backend.service.port }}
