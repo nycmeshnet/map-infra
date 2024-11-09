@@ -41,6 +41,7 @@ spec:
               readOnly: true
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
               readOnly: true
           {{- if .Values.backend.enableLivenessProbe }}
           livenessProbe:
