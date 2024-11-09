@@ -46,6 +46,7 @@ jobs:
             -n ${{ vars.APP_NAMESPACE }} \
             --create-namespace \
             -f ./website-map/values.yaml \
+            --set app_namespace="${{ vars.APP_NAMESPACE }}" \
             --set fqdn="${{ vars.FQDN }}" \
             --set github_secret="${{ secrets.GH_SECRET }}"
           

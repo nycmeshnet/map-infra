@@ -1,5 +1,3 @@
-app_namespace: websitemap
-
 backend:
   replicaCount: 1
   image:
