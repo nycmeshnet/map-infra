@@ -76,8 +76,8 @@ spec:
             - name: GH_INSTALL_ID
               valueFrom:
                 secretKeyRef:
-                  name: website-install-secrets
-                  key: github-client-id
+                  name: website-map-secrets
+                  key: github-install-id
           volumeMounts:
             - name: content-vol
               mountPath: /content
