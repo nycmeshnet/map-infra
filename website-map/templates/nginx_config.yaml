@@ -40,6 +40,11 @@ data:
 
           #access_log  /var/log/nginx/host.access.log  main;
 
+          location = /nginx-tutorial 
+          { 
+            rewrite ^/nodes/.* /index.html break; 
+          }
+
           location / {
               root   /content/current;
               index  index.html;
