@@ -7,8 +7,6 @@ data:
   map.entrypoint.sh: |
     echo "Startup"
     pip install requests PyJWT cryptography
-    echo "Initial content download"
-    sh /map.update.sh
     echo "*/10 * * * * /bin/sh /map.update.sh" >> /etc/crontabs/root
     echo "Starting cron"
     crond -f
