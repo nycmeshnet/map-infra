@@ -41,9 +41,9 @@ data:
           #access_log  /var/log/nginx/host.access.log  main;
 
           location / {
-              rewrite ^/nodes/(.*) index.html last; 
               root   /content/current;
               index  index.html;
+              rewrite ^/nodes/(.*) /index.html last; 
           }
         }
     }
