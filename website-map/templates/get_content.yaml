@@ -18,7 +18,7 @@ data:
     repo = "nycmesh.net"
     branch = "master"
     workflow_name = "Build distribution artifact for map.nycmesh.net"
-    artifact_path = "/tmp/content.zip"
+    artifact_path = "/content/new_content.zip"
 
     def get_jwt():
         with open(pem, 'rb') as pem_file:

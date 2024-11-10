@@ -17,10 +17,13 @@ data:
     echo "Updating content"
     python3 /get_content.py
     echo "Unpacking content"
-    # Unpack
+    content_zip="/content/new_content.zip"
+    new_content_dir="/content/new_content_$(date +%s)/"
+    unzip $content_zip -d $new_content_dir
     echo "Validating content"
     # Sanity check
     echo "Cut over content"
-    # Cut over
+    ln -s $new_content_dir /content/current
     echo "Cleanup"
+    rm -f $content_zip
     # Cleanup downloaded content
