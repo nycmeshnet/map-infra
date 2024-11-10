@@ -9,7 +9,7 @@ backend:
     port: 80
   enableReadinessProbe: false
   readinessProbeInitialDelaySeconds: 20
-  enableLivenessProbe: true
+  enableLivenessProbe: false
   livenessProbeInitialDelaySeconds: 20
   livenessProbePeriodSeconds: 15
   resources: {}
