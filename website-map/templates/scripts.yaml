@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts
+  namespace: {{ .Values.app_namespace }}
+data:
+  map.entrypoint.sh: |
+    echo "Startup"
+    pip install requests PyJWT cryptography
+    echo "Initial content download"
+    sh /map.update.sh
+    echo "*/10 * * * * /bin/sh /map.update.sh" >> /etc/crontabs/root
+    echo "Starting cron"
+    crond -f
+    echo "Error: Cron exited"
+  map.update.sh: |
+    echo "Updating content"
+    python3 /get_content.py
+    echo "Unpacking content"
+    content_zip="/content/new_content.zip"
+    new_content_dir="/content/new_content_$(date +%s)/"
+    unzip $content_zip -d $new_content_dir
+    echo "Validating content"
+    # Sanity check
+    echo "Cut over content"
+    ln -sf $new_content_dir /content/current
+    touch /content/current/404.html
+    echo "Cleanup"
+    ls -d /content/new_content_* | sort -r | tail -n +2 | xargs rm -rf
+    rm -f $content_zip
+    # Cleanup downloaded content

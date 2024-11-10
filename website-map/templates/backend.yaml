@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "website-map.fullname" . }}-backend
+  namespace: {{ .Values.app_namespace }}
+  labels:
+    {{- include "website-map.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "website-map.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: backend
+        {{- include "website-map.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-backend
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.backend.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: content-vol
+              mountPath: /content
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+          {{- if .Values.backend.enableLivenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: {{ .Values.backend.livenessProbeInitialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.livenessProbePeriodSeconds }}
+          {{- end }}
+          {{- if .Values.backend.enableReadinessProbe }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: {{ .Values.backend.readinessProbeInitialDelaySeconds }}
+            periodSeconds: {{ .Values.backend.readinessProbePeriodSeconds }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+      initContainers:
+        - name: update-map-cron
+          image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+          imagePullPolicy: {{ .Values.cron.image.pullPolicy }}
+          restartPolicy: Always
+          command: ['sh', '/map.entrypoint.sh']
+          env:
+            - name: GH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: website-map-secrets
+                  key: github-client-id
+            - name: GH_INSTALL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: website-map-secrets
+                  key: github-install-id
+          volumeMounts:
+            - name: content-vol
+              mountPath: /content
+            - name: map-entrypoint
+              mountPath: /map.entrypoint.sh
+              subPath: map.entrypoint.sh
+              readOnly: true
+            - name: get-content
+              mountPath: /get_content.py
+              subPath: get_content.py
+              readOnly: true
+            - name: map-update
+              mountPath: /map.update.sh
+              subPath: map.update.sh
+              readOnly: true
+            - mountPath: "/secrets/gh"
+              subPath: github-secret
+              name: github-secret
+              readOnly: true
+      volumes:
+        - name: content-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc_name }}
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: map-entrypoint
+          configMap:
+            name: scripts
+            items:
+              - key: map.entrypoint.sh
+                path: map.entrypoint.sh
+        - name: map-update
+          configMap:
+            name: scripts
+            items:
+              - key: map.update.sh
+                path: map.update.sh
+        - name: get-content
+          configMap:
+            name: get-content
+            items:
+              - key: get_content.py
+                path: get_content.py
+        - name: github-secret
+          secret:
+            secretName: website-map-secrets
+            items:
+              - key: github-secret
+                path: github-secret
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
