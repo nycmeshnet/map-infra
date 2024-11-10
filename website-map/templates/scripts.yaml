@@ -23,7 +23,7 @@ data:
     echo "Validating content"
     # Sanity check
     echo "Cut over content"
-    ln -s $new_content_dir /content/current
+    ln -sf $new_content_dir /content/current
     echo "Cleanup"
     rm -f $content_zip
     # Cleanup downloaded content
