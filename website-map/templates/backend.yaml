@@ -94,8 +94,8 @@ spec:
               subPath: map.update.sh
               readOnly: true
             - mountPath: "/secrets/gh"
-              subPath: gh-key
-              name: gh-key
+              subPath: github-secret
+              name: github-secret
               readOnly: true
       volumes:
         - name: content-vol
@@ -121,16 +121,16 @@ spec:
                 path: map.update.sh
         - name: get-content
           configMap:
-            name: scripts
+            name: get-content
             items:
               - key: get_content.py
                 path: get_content.py
-        - name: gh-key
+        - name: github-secret
           secret:
             secretName: website-map-secrets
             items:
-              - key: gh-key
-                path: gh-key
+              - key: github-secret
+                path: github-secret
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
