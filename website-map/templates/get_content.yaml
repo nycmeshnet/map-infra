@@ -54,7 +54,9 @@ data:
         })
         latest_workflow_id = None
         for workflow_run in res.json()["workflow_runs"]:
-            if workflow_run["name"] == workflow_name:
+            status = workflow_run["status"]
+            conclusion = workflow_run["conclusion"]
+            if workflow_run["name"] == workflow_name and status == "completed" and conclusion == "success":
                 latest_workflow_id = workflow_run["id"]
                 break
 
