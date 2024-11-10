@@ -63,15 +63,21 @@ spec:
             {{- toYaml .Values.backend.resources | nindent 12 }}
       initContainers:
         - name: update-map-cron
-          image: alpine:latest
+          image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+          imagePullPolicy: {{ .Values.cron.image.pullPolicy }}
           restartPolicy: Always
           command: ['sh', '/map.entrypoint.sh']
           env:
-            - name: GITHUB_SECRET
+            - name: GH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: website-map-secrets
-                  key: github-secret
+                  key: github-client-id
+            - name: GH_INSTALL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: website-map-secrets
+                  key: github-client-id
           volumeMounts:
             - name: content-vol
               mountPath: /content
@@ -79,9 +85,17 @@ spec:
               mountPath: /map.entrypoint.sh
               subPath: map.entrypoint.sh
               readOnly: true
+            - name: get-content
+              mountPath: /get_content.py
+              subPath: get_content.py
+              readOnly: true
             - name: map-update
               mountPath: /map.update.sh
               subPath: map.update.sh
+              readOnly: true
+            - mountPath: "/secrets/gh"
+              subPath: gh-key
+              name: gh-key
               readOnly: true
       volumes:
         - name: content-vol
@@ -105,6 +119,18 @@ spec:
             items:
               - key: map.update.sh
                 path: map.update.sh
+        - name: get-content
+          configMap:
+            name: scripts
+            items:
+              - key: get_content.py
+                path: get_content.py
+        - name: gh-key
+          secret:
+            secretName: website-map-secrets
+            items:
+              - key: gh-key
+                path: gh-key
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

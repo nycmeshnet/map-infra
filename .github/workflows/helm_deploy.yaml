@@ -48,7 +48,9 @@ jobs:
             -f ./website-map/values.yaml \
             --set app_namespace="${{ vars.APP_NAMESPACE }}" \
             --set fqdn="${{ vars.FQDN }}" \
-            --set github_secret="${{ secrets.GH_SECRET }}"
+            --set github_client_id="${{ secrets.GH_CLIENT_ID }}" \
+            --set github_install_id="${{ secrets.GH_INSTALL_ID }}" \
+            --set github_secret="${{ secrets.GH_APP_KEY }}"
           
           # Rolling restart
           kubectl --kubeconfig ./config --server https://${{ secrets.SSH_TARGET_IP }}:6443 -n ${{ vars.APP_NAMESPACE }} rollout restart statefulset

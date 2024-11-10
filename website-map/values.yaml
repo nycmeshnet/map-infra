@@ -14,6 +14,12 @@ backend:
   livenessProbePeriodSeconds: 15
   resources: {}
 
+cron:
+  image:
+    repository: python
+    pullPolicy: IfNotPresent
+    tag: "3.13-alpine"
+
 pvc_name: "website-map-data"
 pvc_size: "1Gi"
 
