@@ -25,6 +25,6 @@ data:
     echo "Cut over content"
     ln -sf $new_content_dir /content/current
     echo "Cleanup"
-    ls -dt new_content_* | tail -n +2 | xargs rm -rf
+    ls -drt new_content_* | tail -n +2 | xargs rm -rf
     rm -f $content_zip
     # Cleanup downloaded content

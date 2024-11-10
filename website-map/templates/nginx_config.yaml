@@ -42,7 +42,7 @@ data:
 
           location = /nginx-tutorial 
           { 
-            rewrite ^/nodes/.* /index.html break; 
+            rewrite ^/nodes/(.*) index.html break; 
           }
 
           location / {
