@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ master, james/helm ]
+    branches: [ master ]
   workflow_dispatch:
     branches:
       - master
@@ -16,7 +16,7 @@ jobs:
     with:
       environment: dev3
     secrets: inherit
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
 
   deploy_to_prod1:
     name: Deploy to prod 1
