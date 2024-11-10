@@ -43,6 +43,7 @@ data:
           location / {
               root   /content/current;
               index  index.html;
+              error_page 404 /404.html;
               rewrite ^/nodes/(.*) /index.html last; 
           }
         }

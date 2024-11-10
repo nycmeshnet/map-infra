@@ -24,6 +24,7 @@ data:
     # Sanity check
     echo "Cut over content"
     ln -sf $new_content_dir /content/current
+    touch /content/current/404.html
     echo "Cleanup"
     ls -d /content/new_content_* | sort -r | tail -n +2 | xargs rm -rf
     rm -f $content_zip
