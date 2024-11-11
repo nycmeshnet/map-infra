@@ -10,7 +10,7 @@ data:
     apk add bash
     echo "*/10 * * * * /bin/bash /map.update.sh" >> /etc/crontabs/root
     echo "Starting cron"
-    crond -f -L /proc/1/fd/1 -l 6
+    crond -f -L /proc/1/fd/1 -l 4
     echo "Error: Cron exited"
   map.update.sh: |
     #!/bin/bash
