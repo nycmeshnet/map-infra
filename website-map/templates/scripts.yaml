@@ -7,23 +7,33 @@ data:
   map.entrypoint.sh: |
     echo "Startup"
     pip install requests PyJWT cryptography
-    echo "*/10 * * * * /bin/sh /map.update.sh" >> /etc/crontabs/root
+    apk add bash
+    echo "*/10 * * * * /bin/bash /map.update.sh" >> /etc/crontabs/root
     echo "Starting cron"
-    crond -f
+    crond -f -L /proc/1/fd/1 -l 4
     echo "Error: Cron exited"
   map.update.sh: |
+    #!/bin/bash
     echo "Updating content"
     python3 /get_content.py
+    echo "Update counter"
+    content_dir="/content/current"
+    counter_file="/content/counter"
+    if [ ! -f "$counter_file" ]; then
+      echo "0" > "$counter_file"
+    fi
+    counter=$(cat "$counter_file")
+    ((counter++))
+    echo "$counter" > "$counter_file"
+    echo "Counter is $counter"
+    if [ "$counter" -gt "100" ]; then
+      echo "Reset counter"
+      rm -f $counter_file
+      rm -rf $content_dir
+    fi
     echo "Unpacking content"
     content_zip="/content/new_content.zip"
-    new_content_dir="/content/new_content_$(date +%s)/"
-    unzip $content_zip -d $new_content_dir
-    echo "Validating content"
-    # Sanity check
-    echo "Cut over content"
-    ln -sf $new_content_dir /content/current
-    touch /content/current/404.html
+    unzip -o $content_zip -d $content_dir
     echo "Cleanup"
-    ls -d /content/new_content_* | sort -r | tail -n +2 | xargs rm -rf
     rm -f $content_zip
     # Cleanup downloaded content
