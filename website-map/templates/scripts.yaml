@@ -10,7 +10,7 @@ data:
     apk add bash
     echo "*/10 * * * * /bin/bash /map.update.sh" >> /etc/crontabs/root
     echo "Starting cron"
-    crond -f -L /proc/1/fd/1 -l 0
+    crond -f -L /proc/1/fd/1 -l 2
     echo "Error: Cron exited"
   map.update.sh: |
     #!/bin/bash
@@ -33,7 +33,7 @@ data:
     fi
     echo "Unpacking content"
     content_zip="/content/new_content.zip"
-    unzip $content_zip -d $content_dir
+    unzip -o $content_zip -d $content_dir
     echo "Cleanup"
     rm -f $content_zip
     # Cleanup downloaded content
