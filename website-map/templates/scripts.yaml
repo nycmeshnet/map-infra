@@ -26,7 +26,7 @@ data:
     ((counter++))
     echo "$counter" > "$counter_file"
     echo "Counter is $counter"
-    if [ "$counter" -gt "100" ]; then
+    if [ "$counter" -gt "500" ]; then
       echo "Reset counter"
       rm -f $counter_file
       rm -rf $content_dir
