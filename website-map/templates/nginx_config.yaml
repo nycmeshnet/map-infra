@@ -44,7 +44,11 @@ data:
               root   /content/current;
               index  index.html;
               error_page 404 /404.html;
-              rewrite ^/nodes/(.*) /index.html last; 
+              rewrite ^/nodes/(.*) /index.html last;
+              add_header Strict-Transport-Security "60" always;
+              add_header X-Frame-Options "SAMEORIGIN" always;
+              add_header X-Content-Type-Options "nosniff" always;
+              add_header Referrer-Policy "no-referrer" always;
           }
         }
     }
