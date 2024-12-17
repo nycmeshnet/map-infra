@@ -46,7 +46,7 @@ data:
 
     def select_artifact():
         token = get_install_token()
-        url = f"https://api.github.com/repos/{owner}/{repo}/actions/runs?branch={branch}"
+        url = f"https://api.github.com/repos/{owner}/{repo}/actions/runs?branch={branch}&status=success"
         res = requests.get(url, headers={
             "Accept": "application/vnd.github+json",
             "Authorization": f"Bearer {token}",
