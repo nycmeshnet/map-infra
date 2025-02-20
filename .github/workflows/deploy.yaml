@@ -2,10 +2,11 @@ name: Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
   workflow_dispatch:
     branches:
-      - master
+      - main
 
 permissions: read-all
 
@@ -16,7 +17,7 @@ jobs:
     with:
       environment: dev3
     secrets: inherit
-    #if: github.ref == 'refs/heads/master'
+    #if: github.ref == 'refs/heads/main'
 
   deploy_to_prod1:
     name: Deploy to prod 1
@@ -25,7 +26,7 @@ jobs:
       environment: prod1
     secrets: inherit
     needs: deploy_to_dev3
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
   
   deploy_to_prod2:
     name: Deploy to prod 2
@@ -34,4 +35,4 @@ jobs:
       environment: prod2
     secrets: inherit
     needs: deploy_to_dev3
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
