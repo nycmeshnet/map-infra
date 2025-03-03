@@ -1,7 +1,7 @@
 backend:
   replicaCount: 1
   image:
-    repository: nginx
+    repository: docker.io/nginx
     pullPolicy: IfNotPresent
     tag: "latest"
   service:
@@ -16,9 +16,12 @@ backend:
 
 cron:
   image:
-    repository: python
+    repository: docker.io/python
     pullPolicy: IfNotPresent
     tag: "3.13-alpine"
+
+imageCredentials:
+  registry: docker.io
 
 pvc_name: "website-map-data"
 pvc_size: "1Gi"

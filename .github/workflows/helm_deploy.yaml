@@ -48,6 +48,9 @@ jobs:
             -f ./website-map/values.yaml \
             --set app_namespace="${{ vars.APP_NAMESPACE }}" \
             --set fqdn="${{ vars.FQDN }}" \
+            --set imageCredentials.username="${{ secrets.PULL_SECRET_USERNAME }}" \
+            --set imageCredentials.password="${{ secrets.PULL_SECRET_PASSWORD }}" \
+            --set imageCredentials.email="${{ secrets.PULL_SECRET_EMAIL }}" \
             --set github_client_id="${{ secrets.GH_CLIENT_ID }}" \
             --set github_install_id="${{ secrets.GH_INSTALL_ID }}" \
             --set github_secret="${{ secrets.GH_APP_KEY }}"
