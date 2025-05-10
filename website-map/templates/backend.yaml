@@ -33,7 +33,11 @@ spec:
         - name: {{ .Chart.Name }}-backend
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.backend.image.digest }}
+          image: "{{ .Values.backend.image.repository }}@{{ .Values.backend.image.digest }}"
+          {{- else }}
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          {{- end }}
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - name: http
@@ -67,7 +71,11 @@ spec:
             {{- toYaml .Values.backend.resources | nindent 12 }}
       initContainers:
         - name: update-map-cron
+          {{- if .Values.cron.image.digest }}
+          image: "{{ .Values.cron.image.repository }}@{{ .Values.cron.image.digest }}"
+          {{- else }}
           image: "{{ .Values.cron.image.repository }}:{{ .Values.cron.image.tag }}"
+          {{- end }}
           imagePullPolicy: {{ .Values.cron.image.pullPolicy }}
           restartPolicy: Always
           command: ['sh', '/map.entrypoint.sh']

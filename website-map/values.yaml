@@ -3,7 +3,8 @@ backend:
   image:
     repository: docker.io/nginx
     pullPolicy: IfNotPresent
-    tag: "latest"
+    # tag: "1.27.5-bookworm"
+    digest: sha256:c15da6c91de8d2f436196f3a768483ad32c258ed4e1beb3d367a27ed67253e66
   service:
     type: ClusterIP
     port: 80
@@ -18,7 +19,8 @@ cron:
   image:
     repository: docker.io/python
     pullPolicy: IfNotPresent
-    tag: "3.13-alpine"
+    # tag: "3.13-alpine3.21"
+    digest: sha256:f80206d96683c1b27cd522dc300f791a48362b895ad5c0bdd26f78f853c76fa5
 
 imageCredentials:
   registry: docker.io
