@@ -44,7 +44,9 @@ data:
       rm /content/new_content.zip
     fi
     cd public/map
-    zip -r /content/new_content.zip .
+    if -f [ "./index.html" ]; then
+      zip -r /content/new_content.zip .
+    fi
     cd /
     rm -rf /workspace
   map.update.sh: |
@@ -57,6 +59,7 @@ data:
       echo "downloading map"
       python3 /get_content.py
     fi
+    content_zip="/content/new_content.zip"
     echo "Update counter"
     content_dir="/content/current"
     counter_file="/content/counter"
@@ -67,14 +70,15 @@ data:
     ((counter++))
     echo "$counter" > "$counter_file"
     echo "Counter is $counter"
-    if [ "$counter" -gt "500" ]; then
+    if [ "$counter" -gt "500" ] && [ -f "$content_zip" ]; then
       echo "Reset counter"
       rm -f $counter_file
       rm -rf $content_dir
     fi
     echo "Unpacking content"
-    content_zip="/content/new_content.zip"
-    unzip -o $content_zip -d $content_dir
+    if [ -f "$content_zip" ]; then
+      unzip -o $content_zip -d $content_dir
+    fi
     echo "Cleanup"
     rm -f $content_zip
     # Cleanup downloaded content
