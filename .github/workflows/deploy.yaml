@@ -27,12 +27,3 @@ jobs:
     secrets: inherit
     needs: deploy_to_dev3
     if: github.ref == 'refs/heads/main'
-  
-  deploy_to_prod2:
-    name: Deploy to prod 2
-    uses: ./.github/workflows/helm_deploy.yaml
-    with:
-      environment: prod2
-    secrets: inherit
-    needs: deploy_to_dev3
-    if: github.ref == 'refs/heads/main'
