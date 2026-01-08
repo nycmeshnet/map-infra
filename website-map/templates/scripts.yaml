@@ -44,7 +44,7 @@ data:
       rm /content/new_content.zip
     fi
     cd public/map
-    if -f [ "./index.html" ]; then
+    if [ -f "./index.html" ]; then
       zip -r /content/new_content.zip .
     fi
     cd /
@@ -75,10 +75,11 @@ data:
       rm -f $counter_file
       rm -rf $content_dir
     fi
-    echo "Unpacking content"
     if [ -f "$content_zip" ]; then
+      echo "Unpacking content"
       unzip -o $content_zip -d $content_dir
+      echo "Cleanup"
+      rm -f $content_zip
+    else
+      echo "content zip not found"
     fi
-    echo "Cleanup"
-    rm -f $content_zip
-    # Cleanup downloaded content
