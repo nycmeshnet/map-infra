@@ -90,12 +90,18 @@ spec:
                 secretKeyRef:
                   name: website-map-secrets
                   key: github-install-id
+            - name: BUILD_MAP
+              value: "true"
           volumeMounts:
             - name: content-vol
               mountPath: /content
             - name: map-entrypoint
               mountPath: /map.entrypoint.sh
               subPath: map.entrypoint.sh
+              readOnly: true
+            - name: map-build-zip
+              mountPath: /map.build.zip.sh
+              subPath: map.build.zip.sh
               readOnly: true
             - name: get-content
               mountPath: /get_content.py
@@ -131,6 +137,12 @@ spec:
             items:
               - key: map.update.sh
                 path: map.update.sh
+        - name: map-build-zip
+          configMap:
+            name: scripts
+            items:
+              - key: map.build.zip.sh
+                path: map.build.zip.sh
         - name: get-content
           configMap:
             name: get-content
