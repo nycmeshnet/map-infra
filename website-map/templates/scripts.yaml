@@ -7,15 +7,59 @@ data:
   map.entrypoint.sh: |
     echo "Startup"
     pip install requests PyJWT cryptography
-    apk add bash
+    apk add bash git nodejs npm curl zip jq
+    echo "Installing hugo"
+    HUGO_VERSION="0.69.2"
+    curl -sLo "/tmp/hugo.tgz" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz"
+    tar -xzf /tmp/hugo.tgz
+    chmod a+x /hugo
+    mv /hugo /usr/bin/hugo
+    echo "Installing dart-saas"
+    npm install -g sass
+    echo "First manual run of update map"
+    bash /map.update.sh
     echo "*/10 * * * * /bin/bash /map.update.sh" >> /etc/crontabs/root
     echo "Starting cron"
     crond -f -L /proc/1/fd/1 -l 4
     echo "Error: Cron exited"
+  map.build.zip.sh: |
+    if [ -d /workspace ]; then
+      rm -rf /workspace
+    fi
+    git clone --recursive https://github.com/nycmeshnet/nycmesh.net /workspace
+    cd /workspace
+    export STANDALONE_MAP_BUILD="true"
+    export NODE_OPTIONS='--openssl-legacy-provider'
+    sh update-map.sh
+    export HUGO_ENVIRONMENT="production"
+    export HUGO_CACHEDIR="/tmp/hugo_cache"
+    hugo --minify --baseURL "https://nycmesh.net/"
+    echo "Build Map Payload"
+    mkdir -p public/map/img/
+    mv public/img/map/ public/map/img/map/
+    mv public/favicon.ico public/map/favicon.ico
+    mv public/404.html public/map/
+    echo "Make zip"
+    if [ -f "/content/new_content.zip" ]; then
+      rm /content/new_content.zip
+    fi
+    cd public/map
+    if [ -f "./index.html" ]; then
+      zip -r /content/new_content.zip .
+    fi
+    cd /
+    rm -rf /workspace
   map.update.sh: |
     #!/bin/bash
     echo "Updating content"
-    python3 /get_content.py
+    if [ ! -z "$BUILD_MAP" ]; then
+      echo "building map"
+      bash /map.build.zip.sh
+    else
+      echo "downloading map"
+      python3 /get_content.py
+    fi
+    content_zip="/content/new_content.zip"
     echo "Update counter"
     content_dir="/content/current"
     counter_file="/content/counter"
@@ -26,14 +70,16 @@ data:
     ((counter++))
     echo "$counter" > "$counter_file"
     echo "Counter is $counter"
-    if [ "$counter" -gt "500" ]; then
+    if [ "$counter" -gt "500" ] && [ -f "$content_zip" ]; then
       echo "Reset counter"
       rm -f $counter_file
       rm -rf $content_dir
     fi
-    echo "Unpacking content"
-    content_zip="/content/new_content.zip"
-    unzip -o $content_zip -d $content_dir
-    echo "Cleanup"
-    rm -f $content_zip
-    # Cleanup downloaded content
+    if [ -f "$content_zip" ]; then
+      echo "Unpacking content"
+      unzip -o $content_zip -d $content_dir
+      echo "Cleanup"
+      rm -f $content_zip
+    else
+      echo "content zip not found"
+    fi
