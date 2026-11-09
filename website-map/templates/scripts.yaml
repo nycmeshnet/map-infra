@@ -30,7 +30,7 @@ data:
     cd /workspace
     export STANDALONE_MAP_BUILD="true"
     export NODE_OPTIONS='--openssl-legacy-provider'
-    sh update-map.sh
+    sh update-map.sh || exit 1
     export HUGO_ENVIRONMENT="production"
     export HUGO_CACHEDIR="/tmp/hugo_cache"
     hugo --minify --baseURL "https://nycmesh.net/"
