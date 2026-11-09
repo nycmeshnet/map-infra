@@ -23,6 +23,7 @@ data:
     crond -f -L /proc/1/fd/1 -l 4
     echo "Error: Cron exited"
   map.build.zip.sh: |
+    set -e
     if [ -d /workspace ]; then
       rm -rf /workspace
     fi
