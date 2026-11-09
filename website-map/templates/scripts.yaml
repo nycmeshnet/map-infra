@@ -23,6 +23,7 @@ data:
     crond -f -L /proc/1/fd/1 -l 4
     echo "Error: Cron exited"
   map.build.zip.sh: |
+    set -e
     if [ -d /workspace ]; then
       rm -rf /workspace
     fi
@@ -30,7 +31,7 @@ data:
     cd /workspace
     export STANDALONE_MAP_BUILD="true"
     export NODE_OPTIONS='--openssl-legacy-provider'
-    sh update-map.sh || exit 1
+    sh update-map.sh
     export HUGO_ENVIRONMENT="production"
     export HUGO_CACHEDIR="/tmp/hugo_cache"
     hugo --minify --baseURL "https://nycmesh.net/"
